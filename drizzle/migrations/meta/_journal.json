@@ -8,6 +8,13 @@
       "when": 1795049781642,
       "tag": "0000_pharmacy_suite_schema",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1795050090026,
+      "tag": "0001_staff_invites_for_employee_creation",
+      "breakpoints": true
     }
   ]
 }

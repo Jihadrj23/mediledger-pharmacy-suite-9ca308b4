@@ -23,6 +23,12 @@ export const createEmployee = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertAdmin(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const inviteEmail = data.email.toLowerCase();
+    // The signup trigger only accepts emails the owner has invited (see staff_invites).
+    const { error: inviteError } = await supabaseAdmin
+      .from("staff_invites")
+      .upsert({ email: inviteEmail, role: data.role, created_by: context.userId });
+    if (inviteError) throw new Error(inviteError.message);
     const { data: created, error } = await supabaseAdmin.auth.admin.createUser({
       email: data.email,
       password: data.password,
@@ -30,7 +36,10 @@ export const createEmployee = createServerFn({ method: "POST" })
       user_metadata: { full_name: data.full_name },
       app_metadata: { created_by_admin: "true", staff_role: data.role },
     });
-    if (error || !created.user) throw new Error(error?.message ?? "Could not create account");
+    if (error || !created.user) {
+      await supabaseAdmin.from("staff_invites").delete().eq("email", inviteEmail);
+      throw new Error(error?.message ?? "Could not create account");
+    }
     await supabaseAdmin.from("profiles").update({
       phone: data.phone, max_discount_percent: data.max_discount_percent, can_collect_due: data.can_collect_due,
     }).eq("id", created.user.id);

@@ -28,3 +28,8 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Project rules
+
+- Staff accounts are created only through the `createEmployee` server function, which writes a `staff_invites` row before `auth.admin.createUser`; the `handle_new_user` trigger runs before app_metadata is saved, so it accepts only the first (owner) sign-up or an invited email.
+- Roles live in `user_roles` and are checked with `has_role`/`is_staff` in RLS; never derive privileges from profile fields or user metadata.
