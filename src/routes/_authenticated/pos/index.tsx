@@ -46,11 +46,11 @@ function StockLookup() {
           {list.map((m) => {
             const st = stockStatus(m);
             return (
-              <div key={m.id} className="rounded-xl border bg-card p-4 shadow-card">
+              <div key={m.id} className="min-w-0 rounded-xl border bg-card p-4 shadow-card">
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0"><p className="truncate font-semibold">{m.brand_name} <span className="font-normal text-muted-foreground">{m.strength}</span></p>
                     <p className="truncate text-xs text-muted-foreground">{m.generic_name} · {m.form?.name} · {m.manufacturer?.name}</p></div>
-                  <StatusBadge tone={st.tone}>{st.label}</StatusBadge>
+                  <span className="shrink-0"><StatusBadge tone={st.tone}>{st.label}</StatusBadge></span>
                 </div>
                 <div className="num mt-3 flex items-end justify-between text-sm">
                   <div><p className="text-xs text-muted-foreground">Available</p><p className="font-medium">{describeQty(m.sellable_qty, m.strips_per_box, m.pieces_per_strip)}</p></div>
