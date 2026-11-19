@@ -1,23 +1,32 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { Pill } from "lucide-react";
+import { fetchCurrentStaff, homeFor } from "@/lib/staff";
 
-// The home route ships no og:image, so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "PharmaDesk — Pharmacy POS & Inventory" },
+      { name: "description", content: "Sign in to manage your pharmacy's sales, stock and accounts." },
+      { property: "og:title", content: "PharmaDesk — Pharmacy POS & Inventory" },
+      { property: "og:description", content: "Sign in to manage your pharmacy's sales, stock and accounts." },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    fetchCurrentStaff().then((s) => {
+      navigate({ to: s ? homeFor(s.role) : "/auth", replace: true });
+    });
+  }, [navigate]);
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+    <div className="flex min-h-screen items-center justify-center">
+      <div className="flex items-center gap-3 text-muted-foreground">
+        <Pill className="size-5 animate-pulse text-primary" /> Loading PharmaDesk…
+      </div>
     </div>
   );
 }

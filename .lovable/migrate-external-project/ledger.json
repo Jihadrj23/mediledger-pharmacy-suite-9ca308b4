@@ -1,0 +1,16 @@
+{
+  "source": "github:Jihadrj23/mediledger-pharmacy-suite",
+  "capabilities": [
+    {"capability": "code", "source": "TanStack Start app (admin + POS routes)", "outcome": "migrate", "status": "in_progress", "next_action": "copy src into project"},
+    {"capability": "schema", "source": "drizzle/migrations/0000_migration.sql (12 tables, RLS, RPCs)", "outcome": "migrate", "status": "pending", "next_action": "apply as Lovable Cloud migration"},
+    {"capability": "demo seed records", "source": "inline INSERTs in migration", "outcome": "migrate", "status": "pending", "next_action": "included in migration"},
+    {"capability": "records (production data)", "source": "original Lovable Cloud database", "outcome": "migrate", "status": "pending", "next_action": "request CSV export after preview"},
+    {"capability": "auth identities", "source": "email/password staff accounts", "outcome": "migrate", "status": "pending", "next_action": "request users export; first admin can re-run setup"},
+    {"capability": "authorization", "source": "user_roles + has_role RLS", "outcome": "migrate", "status": "pending", "next_action": "included in migration"},
+    {"capability": "server functions", "source": "src/lib/employees.functions.ts (admin create/update staff)", "outcome": "migrate", "status": "pending", "next_action": "copy; uses service role in Cloud"},
+    {"capability": "storage", "source": "none detected (logo_url is text)", "outcome": "none", "status": "verified", "next_action": ""},
+    {"capability": "schedules/webhooks/payments/email/AI", "source": "none detected", "outcome": "none", "status": "verified", "next_action": ""},
+    {"capability": "secrets", "source": ".env holds only old Cloud keys (platform metadata)", "outcome": "replace", "status": "verified", "next_action": "new Cloud keys provisioned automatically"},
+    {"capability": "verification", "source": "", "outcome": "verify", "status": "pending", "next_action": "build, sign-in, CRUD check"}
+  ]
+}
