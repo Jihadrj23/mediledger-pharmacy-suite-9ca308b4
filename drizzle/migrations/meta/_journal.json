@@ -15,6 +15,13 @@
       "when": 1795050090026,
       "tag": "0001_staff_invites_for_employee_creation",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795052646803,
+      "tag": "0002_sales_dues_stock_in_and_open_signup",
+      "breakpoints": true
     }
   ]
 }

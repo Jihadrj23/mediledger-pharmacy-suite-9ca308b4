@@ -143,4 +143,8 @@
 
 @media print {
   .no-print { display: none !important; }
+  body.printing-receipt * { visibility: hidden !important; }
+  body.printing-receipt .print-area, body.printing-receipt .print-area * { visibility: visible !important; }
+  body.printing-receipt .print-area { position: fixed; inset: 0 auto auto 0; width: 80mm; padding: 4mm; box-shadow: none; border: 0; }
+  @page { margin: 0; }
 }

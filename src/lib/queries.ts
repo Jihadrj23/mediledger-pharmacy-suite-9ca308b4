@@ -54,3 +54,29 @@ export function stockStatus(m: { sellable_qty: number; reorder_level: number; ne
   }
   return { tone: "success" as const, label: "In stock" };
 }
+
+export const customersQuery = queryOptions({
+  queryKey: ["customers"],
+  queryFn: async () => {
+    const { data, error } = await supabase.from("customers").select("*").order("name").limit(5000);
+    if (error) throw error;
+    return data;
+  },
+});
+export type CustomerRow = Awaited<ReturnType<NonNullable<typeof customersQuery.queryFn>>>[number];
+
+/** Search the medicine list by brand, generic, strength, form, maker or exact barcode. */
+export function searchMedicines<T extends { brand_name: string; generic_name: string; strength: string; barcode: string | null; status: string; manufacturer?: { name: string } | null; form?: { name: string } | null }>(list: T[], q: string, limit = 40): T[] {
+  const s = q.trim().toLowerCase();
+  const active = list.filter((m) => m.status === "active");
+  if (!s) return active.slice(0, limit);
+  const exact = active.filter((m) => m.barcode === s);
+  if (exact.length) return exact;
+  const words = s.split(/\s+/);
+  const hits = active.filter((m) => {
+    const hay = [m.brand_name, m.generic_name, m.strength, m.manufacturer?.name, m.form?.name].join(" ").toLowerCase();
+    return words.every((w) => hay.includes(w));
+  });
+  hits.sort((a, b) => Number(!a.brand_name.toLowerCase().startsWith(s)) - Number(!b.brand_name.toLowerCase().startsWith(s)));
+  return hits.slice(0, limit);
+}

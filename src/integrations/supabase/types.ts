@@ -62,6 +62,60 @@ export type Database = {
         }
         Relationships: []
       }
+      customer_ledger: {
+        Row: {
+          amount: number
+          created_at: string
+          created_by: string | null
+          customer_id: string
+          id: string
+          is_demo: boolean
+          kind: string
+          method: string | null
+          note: string | null
+          sale_id: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          created_by?: string | null
+          customer_id: string
+          id?: string
+          is_demo?: boolean
+          kind: string
+          method?: string | null
+          note?: string | null
+          sale_id?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          created_by?: string | null
+          customer_id?: string
+          id?: string
+          is_demo?: boolean
+          kind?: string
+          method?: string | null
+          note?: string | null
+          sale_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_ledger_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_ledger_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customers: {
         Row: {
           address: string | null
@@ -113,6 +167,39 @@ export type Database = {
           created_at?: string
           id?: string
           name?: string
+        }
+        Relationships: []
+      }
+      expenses: {
+        Row: {
+          amount: number
+          category: string
+          created_at: string
+          created_by: string | null
+          expense_date: string
+          id: string
+          is_demo: boolean
+          note: string | null
+        }
+        Insert: {
+          amount: number
+          category: string
+          created_at?: string
+          created_by?: string | null
+          expense_date?: string
+          id?: string
+          is_demo?: boolean
+          note?: string | null
+        }
+        Update: {
+          amount?: number
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          expense_date?: string
+          id?: string
+          is_demo?: boolean
+          note?: string | null
         }
         Relationships: []
       }
@@ -393,6 +480,131 @@ export type Database = {
         }
         Relationships: []
       }
+      sale_items: {
+        Row: {
+          cost_amount: number
+          created_at: string
+          discount: number
+          id: string
+          is_demo: boolean
+          line_total: number
+          medicine_id: string
+          qty: number
+          qty_base: number
+          sale_id: string
+          unit: string
+          unit_price: number
+        }
+        Insert: {
+          cost_amount?: number
+          created_at?: string
+          discount?: number
+          id?: string
+          is_demo?: boolean
+          line_total?: number
+          medicine_id: string
+          qty: number
+          qty_base: number
+          sale_id: string
+          unit: string
+          unit_price?: number
+        }
+        Update: {
+          cost_amount?: number
+          created_at?: string
+          discount?: number
+          id?: string
+          is_demo?: boolean
+          line_total?: number
+          medicine_id?: string
+          qty?: number
+          qty_base?: number
+          sale_id?: string
+          unit?: string
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sale_items_medicine_id_fkey"
+            columns: ["medicine_id"]
+            isOneToOne: false
+            referencedRelation: "medicines"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sale_items_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sales: {
+        Row: {
+          cashier_id: string | null
+          cashier_name: string
+          cost_total: number
+          created_at: string
+          customer_id: string | null
+          discount: number
+          due: number
+          id: string
+          invoice_no: string
+          is_demo: boolean
+          note: string | null
+          paid: number
+          payment_method: string
+          subtotal: number
+          total: number
+          vat: number
+        }
+        Insert: {
+          cashier_id?: string | null
+          cashier_name?: string
+          cost_total?: number
+          created_at?: string
+          customer_id?: string | null
+          discount?: number
+          due?: number
+          id?: string
+          invoice_no: string
+          is_demo?: boolean
+          note?: string | null
+          paid?: number
+          payment_method?: string
+          subtotal?: number
+          total?: number
+          vat?: number
+        }
+        Update: {
+          cashier_id?: string | null
+          cashier_name?: string
+          cost_total?: number
+          created_at?: string
+          customer_id?: string | null
+          discount?: number
+          due?: number
+          id?: string
+          invoice_no?: string
+          is_demo?: boolean
+          note?: string | null
+          paid?: number
+          payment_method?: string
+          subtotal?: number
+          total?: number
+          vat?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       staff_invites: {
         Row: {
           created_at: string
@@ -527,8 +739,59 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_adjust_stock: {
+        Args: {
+          _batch_id: string
+          _delta: number
+          _note?: string
+          _reason: string
+        }
+        Returns: number
+      }
+      admin_finance_summary: { Args: never; Returns: Json }
       admin_inventory_summary: { Args: never; Returns: Json }
+      admin_sales_list: {
+        Args: { _from: string; _to: string }
+        Returns: {
+          cashier_name: string
+          cost_total: number
+          created_at: string
+          customer_id: string
+          customer_name: string
+          discount: number
+          due: number
+          id: string
+          invoice_no: string
+          is_demo: boolean
+          paid: number
+          payment_method: string
+          profit: number
+          subtotal: number
+          total: number
+          vat: number
+        }[]
+      }
       clear_demo_data: { Args: never; Returns: undefined }
+      collect_due: {
+        Args: {
+          _amount: number
+          _customer_id: string
+          _method?: string
+          _note?: string
+        }
+        Returns: number
+      }
+      create_sale: {
+        Args: {
+          _bill_discount?: number
+          _customer_id?: string
+          _items: Json
+          _note?: string
+          _paid?: number
+          _payment_method?: string
+        }
+        Returns: Json
+      }
       get_stock_overview: {
         Args: never
         Returns: {
@@ -557,6 +820,24 @@ export type Database = {
         Returns: undefined
       }
       setup_required: { Args: never; Returns: boolean }
+      stock_in: {
+        Args: {
+          _batch_number: string
+          _expiry_date: string
+          _medicine_id: string
+          _mfg_date?: string
+          _mrp: number
+          _note?: string
+          _purchase_price: number
+          _qty: number
+          _unit: string
+        }
+        Returns: string
+      }
+      unit_factor: {
+        Args: { _pps: number; _spb: number; _unit: string }
+        Returns: number
+      }
     }
     Enums: {
       app_role: "admin" | "cashier"
